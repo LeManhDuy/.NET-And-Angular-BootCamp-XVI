@@ -1,25 +1,27 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Marine\\Desktop\\api\\api.csproj": {}
+    "C:\\Users\\Marine\\Desktop\\.NET-BootCamp-X-VI\\server\\api.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Marine\\Desktop\\api\\api.csproj": {
+    "C:\\Users\\Marine\\Desktop\\.NET-BootCamp-X-VI\\server\\api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Marine\\Desktop\\api\\api.csproj",
+        "projectUniqueName": "C:\\Users\\Marine\\Desktop\\.NET-BootCamp-X-VI\\server\\api.csproj",
         "projectName": "api",
-        "projectPath": "C:\\Users\\Marine\\Desktop\\api\\api.csproj",
+        "projectPath": "C:\\Users\\Marine\\Desktop\\.NET-BootCamp-X-VI\\server\\api.csproj",
         "packagesPath": "C:\\Users\\Marine\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Marine\\Desktop\\api\\obj\\",
+        "outputPath": "C:\\Users\\Marine\\Desktop\\.NET-BootCamp-X-VI\\server\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Marine\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Marine\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -38,6 +40,10 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "dependencies": {
+            "AutoMapper.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[12.0.0, )"
+            },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[7.0.2, )"
@@ -86,7 +92,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
         }
       }
     }
