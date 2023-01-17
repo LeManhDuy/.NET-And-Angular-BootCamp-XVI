@@ -24,12 +24,18 @@ namespace server.Repository
 
     public Pokemon GetPokemon(int id)
     {
-      return _context.Pokemons.Where(p => p.Hidden == false && p.Id == id).FirstOrDefault();
+      return _context.Pokemons.Where(p => p.Hidden == false && p.Id == id)
+                              .Include(p => p.PokemonCategories)
+                              .ThenInclude(pc => pc.Category)
+                              .FirstOrDefault();
     }
 
     public Pokemon GetPokemon(string name)
     {
-      return _context.Pokemons.Where(p => p.Hidden == false && p.Name == name).FirstOrDefault();
+      return _context.Pokemons.Where(p => p.Hidden == false && p.Name == name)
+                              .Include(p => p.PokemonCategories)
+                              .ThenInclude(pc => pc.Category)
+                              .FirstOrDefault();
     }
 
     public decimal GetPokemonRating(int pokemonId)
