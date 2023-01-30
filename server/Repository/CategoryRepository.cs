@@ -14,9 +14,9 @@ namespace server.Repository
       _context = context;
     }
 
-    public bool CategoryExists(int id)
+    public bool CategoryExists(int categoryId)
     {
-      return _context.Categories.Any(c => c.Id == id && c.Hidden == false);
+      return _context.Categories.Any(c => c.Id == categoryId && c.Hidden == false);
     }
 
     public ICollection<Category> GetCategories()
@@ -24,9 +24,9 @@ namespace server.Repository
       return _context.Categories.Where(c => c.Hidden == false).OrderBy(c => c.Name).ToList();
     }
 
-    public Category GetCategory(int id)
+    public Category GetCategory(int categoryId)
     {
-      return _context.Categories.Where(c => c.Id == id && c.Hidden == false).OrderBy(c => c.Name).FirstOrDefault();
+      return _context.Categories.Where(c => c.Id == categoryId && c.Hidden == false).OrderBy(c => c.Name).FirstOrDefault();
     }
 
     public ICollection<Pokemon> GetPokemonByCategories(int categoryId)

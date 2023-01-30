@@ -30,7 +30,6 @@ namespace server.Controller
 
     [HttpGet("{categoryId}")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
-    [ProducesResponseType(400)]
     public IActionResult GetCategory(int categoryId)
     {
       if (!_categoryRepository.CategoryExists(categoryId))
@@ -46,7 +45,6 @@ namespace server.Controller
 
     [HttpGet("{categoryId}/pokemon")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<Pokemon>))]
-    [ProducesResponseType(400)]
     public IActionResult GetPokemonByCategories(int categoryId)
     {
       if (!_categoryRepository.CategoryExists(categoryId))

@@ -34,7 +34,6 @@ namespace server.Controller
 
     [HttpGet("{pokemonId}")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<Pokemon>))]
-    [ProducesResponseType(400)]
     public IActionResult GetPokemon(int pokemonId)
     {
       if (!_pokemonRepository.PokemonExists(pokemonId))
@@ -50,7 +49,6 @@ namespace server.Controller
 
     [HttpGet("{pokemonId}/rating")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<decimal>))]
-    [ProducesResponseType(400)]
     public IActionResult GetPokemonRating(int pokemonId)
     {
       if (!_pokemonRepository.PokemonExists(pokemonId))
@@ -63,7 +61,5 @@ namespace server.Controller
 
       return Ok(pokemonRating);
     }
-
-    
   }
 }

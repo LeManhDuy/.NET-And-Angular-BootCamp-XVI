@@ -10,7 +10,7 @@ namespace server.Interfaces
   {
     // interface-namespace
     ICollection<Pokemon> GetPokemons();
-    Pokemon GetPokemon(int id);
+    Pokemon GetPokemon(int pokemonId);
     Pokemon GetPokemon(string name);
     decimal GetPokemonRating(int pokemonId);
     bool PokemonExists(int pokemonId);

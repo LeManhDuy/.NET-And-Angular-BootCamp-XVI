@@ -22,9 +22,9 @@ namespace server.Repository
                               .ToList();
     }
 
-    public Pokemon GetPokemon(int id)
+    public Pokemon GetPokemon(int pokemonId)
     {
-      return _context.Pokemons.Where(p => p.Hidden == false && p.Id == id)
+      return _context.Pokemons.Where(p => p.Hidden == false && p.Id == pokemonId)
                               .Include(p => p.PokemonCategories)
                               .ThenInclude(pc => pc.Category)
                               .FirstOrDefault();
