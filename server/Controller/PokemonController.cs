@@ -15,18 +15,17 @@ namespace server.Controller
   public class PokemonController : ControllerBase
   {
     private readonly IPokemonRepository _pokemonRepository;
-    private readonly DataContext _dataContext;
-    public PokemonController(IPokemonRepository pokemonRepository, DataContext dataContext)
+    public PokemonController(IPokemonRepository pokemonRepository)
     {
       _pokemonRepository = pokemonRepository;
-      _dataContext = dataContext;
     }
 
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(IEnumerable<Pokemon>))]
-    public IActionResult GetPokemon()
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> GetPokemonAsync()
     {
-      var pokemon = _pokemonRepository.GetPokemons();
+      var pokemon = await _pokemonRepository.GetPokemonsAsync();
       if (!ModelState.IsValid)
         return BadRequest(ModelState);
       return Ok(pokemon);
@@ -34,12 +33,13 @@ namespace server.Controller
 
     [HttpGet("{pokemonId}")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<Pokemon>))]
-    public IActionResult GetPokemon(int pokemonId)
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> GetPokemonAsync(int pokemonId)
     {
       if (!_pokemonRepository.PokemonExists(pokemonId))
         return NotFound();
 
-      var pokemon = _pokemonRepository.GetPokemon(pokemonId);
+      var pokemon = await _pokemonRepository.GetPokemonAsync(pokemonId);
 
       if (!ModelState.IsValid)
         return BadRequest(ModelState);
@@ -48,7 +48,6 @@ namespace server.Controller
     }
 
     [HttpGet("{pokemonId}/rating")]
-    [ProducesResponseType(200, Type = typeof(IEnumerable<decimal>))]
     public IActionResult GetPokemonRating(int pokemonId)
     {
       if (!_pokemonRepository.PokemonExists(pokemonId))

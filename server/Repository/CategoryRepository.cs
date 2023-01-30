@@ -19,19 +19,19 @@ namespace server.Repository
       return _context.Categories.Any(c => c.Id == categoryId && c.Hidden == false);
     }
 
-    public ICollection<Category> GetCategories()
+    public async Task<List<Category>> GetCategoriesAsync()
     {
-      return _context.Categories.Where(c => c.Hidden == false).OrderBy(c => c.Name).ToList();
+      return await _context.Categories.Where(c => c.Hidden == false).OrderBy(c => c.Name).ToListAsync();
     }
 
-    public Category GetCategory(int categoryId)
+    public async Task<Category> GetCategoryAsync(int categoryId)
     {
-      return _context.Categories.Where(c => c.Id == categoryId && c.Hidden == false).OrderBy(c => c.Name).FirstOrDefault();
+      return await _context.Categories.Where(c => c.Id == categoryId && c.Hidden == false).OrderBy(c => c.Name).FirstOrDefaultAsync();
     }
 
-    public ICollection<Pokemon> GetPokemonByCategories(int categoryId)
+    public async Task<List<Pokemon>> GetPokemonByCategoriesAsync(int categoryId)
     {
-      return _context.PokemonCategories.Where(pc => pc.CategoryId == categoryId).Select(pc => pc.Pokemon).ToList();
+      return await _context.PokemonCategories.Where(pc => pc.CategoryId == categoryId).Select(pc => pc.Pokemon).ToListAsync();
     }
   }
 }

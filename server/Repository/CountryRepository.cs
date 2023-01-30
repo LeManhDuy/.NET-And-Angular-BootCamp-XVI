@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using server.Data;
 using server.Interfaces;
 using server.Models;
@@ -22,24 +23,24 @@ namespace server.Repository
       return _context.Countries.Any(c => c.Hidden == false && c.Id == countryId);
     }
 
-    public ICollection<Country> GetCountries()
+    public async Task<List<Country>> GetCountriesAsync()
     {
-      return _context.Countries.Where(c => c.Hidden == false).ToList();
+      return await _context.Countries.Where(c => c.Hidden == false).ToListAsync();
     }
 
-    public Country GetCountry(int countryId)
+    public async Task<Country> GetCountryAsync(int countryId)
     {
-      return _context.Countries.Where(c => c.Hidden == false && c.Id == countryId).FirstOrDefault();
+      return await _context.Countries.Where(c => c.Hidden == false && c.Id == countryId).FirstOrDefaultAsync();
     }
 
-    public Country GetCountryByOwner(int ownerId)
+    public async Task<Country> GetCountryOfOwnerAsync(int ownerId)
     {
-      return _context.Owners.Where(o => o.Hidden == false && o.Id == ownerId).Select(c => c.Country).FirstOrDefault();
+      return await _context.Owners.Where(o => o.Hidden == false && o.Id == ownerId).Select(c => c.Country).FirstOrDefaultAsync();
     }
 
-    public ICollection<Owner> GetOwnersFromACountry(int countryId)
+    public async Task<List<Owner>> GetOwnersFromACountryAsync(int countryId)
     {
-      return _context.Owners.Where(o => o.Country.Id == countryId).ToList();
+      return await _context.Owners.Where(o => o.Country.Id == countryId).ToListAsync();
     }
   }
 }

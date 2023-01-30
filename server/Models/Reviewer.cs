@@ -6,6 +6,6 @@
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public bool Hidden { get; set; }
-    public ICollection<Review> Reviews { get; set; }
+    public List<Review> Reviews { get; set; }
   }
 }

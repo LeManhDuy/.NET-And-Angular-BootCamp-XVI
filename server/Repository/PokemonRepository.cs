@@ -14,28 +14,23 @@ namespace server.Repository
       _context = context;
     }
 
-    public ICollection<Pokemon> GetPokemons()
+    public async Task<List<Pokemon>> GetPokemonsAsync()
     {
-      return _context.Pokemons.Where(p => p.Hidden == false)
-                              .Include(p => p.PokemonCategories)
-                              .ThenInclude(pc => pc.Category)
-                              .ToList();
+      return await _context.Pokemons.Where(p => p.Hidden == false)
+                                    .Include(p => p.PokemonCategories)
+                                    .ToListAsync();
     }
 
-    public Pokemon GetPokemon(int pokemonId)
+    public async Task<Pokemon> GetPokemonAsync(int pokemonId)
     {
-      return _context.Pokemons.Where(p => p.Hidden == false && p.Id == pokemonId)
-                              .Include(p => p.PokemonCategories)
-                              .ThenInclude(pc => pc.Category)
-                              .FirstOrDefault();
+      return await _context.Pokemons.Where(p => p.Hidden == false && p.Id == pokemonId)
+                                    .FirstOrDefaultAsync();
     }
 
-    public Pokemon GetPokemon(string name)
+    public async Task<Pokemon> GetPokemonAsync(string name)
     {
-      return _context.Pokemons.Where(p => p.Hidden == false && p.Name == name)
-                              .Include(p => p.PokemonCategories)
-                              .ThenInclude(pc => pc.Category)
-                              .FirstOrDefault();
+      return await _context.Pokemons.Where(p => p.Hidden == false && p.Name == name)
+                                    .FirstOrDefaultAsync();
     }
 
     public decimal GetPokemonRating(int pokemonId)

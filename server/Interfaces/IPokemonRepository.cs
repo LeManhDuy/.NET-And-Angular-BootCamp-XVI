@@ -9,9 +9,9 @@ namespace server.Interfaces
   public interface IPokemonRepository
   {
     // interface-namespace
-    ICollection<Pokemon> GetPokemons();
-    Pokemon GetPokemon(int pokemonId);
-    Pokemon GetPokemon(string name);
+    Task<List<Pokemon>> GetPokemonsAsync();
+    Task<Pokemon> GetPokemonAsync(int pokemonId);
+    Task<Pokemon> GetPokemonAsync(string name);
     decimal GetPokemonRating(int pokemonId);
     bool PokemonExists(int pokemonId);
   }

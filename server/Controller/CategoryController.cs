@@ -10,19 +10,17 @@ namespace server.Controller
   public class CategoryController : ControllerBase
   {
     private readonly ICategoryRepository _categoryRepository;
-    private readonly DataContext _dataContext;
-    public CategoryController(ICategoryRepository categoryRepository, DataContext dataContext)
+    public CategoryController(ICategoryRepository categoryRepository)
     {
       _categoryRepository = categoryRepository;
-      _dataContext = dataContext;
     }
-
 
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
-    public IActionResult GetCategory()
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> GetCategoryAsync()
     {
-      var categories = _categoryRepository.GetCategories();
+      var categories = await _categoryRepository.GetCategoriesAsync();
       if (!ModelState.IsValid)
         return BadRequest(ModelState);
       return Ok(categories);
@@ -30,12 +28,13 @@ namespace server.Controller
 
     [HttpGet("{categoryId}")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
-    public IActionResult GetCategory(int categoryId)
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> GetCategoryAsync(int categoryId)
     {
       if (!_categoryRepository.CategoryExists(categoryId))
         return NotFound();
 
-      var pokemon = _categoryRepository.GetCategory(categoryId);
+      var pokemon = await _categoryRepository.GetCategoryAsync(categoryId);
 
       if (!ModelState.IsValid)
         return BadRequest(ModelState);
@@ -45,12 +44,13 @@ namespace server.Controller
 
     [HttpGet("{categoryId}/pokemon")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<Pokemon>))]
-    public IActionResult GetPokemonByCategories(int categoryId)
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> GetPokemonByCategoryIdAsync(int categoryId)
     {
       if (!_categoryRepository.CategoryExists(categoryId))
         return NotFound();
 
-      var pokemon = _categoryRepository.GetPokemonByCategories(categoryId);
+      var pokemon = await _categoryRepository.GetPokemonByCategoriesAsync(categoryId);
 
       if (!ModelState.IsValid)
         return BadRequest(ModelState);
