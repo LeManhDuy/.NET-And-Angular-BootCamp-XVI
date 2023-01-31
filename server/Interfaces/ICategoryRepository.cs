@@ -1,3 +1,4 @@
+using server.Dto;
 using server.Models;
 
 namespace server.Interfaces
@@ -8,5 +9,9 @@ namespace server.Interfaces
     Task<Category> GetCategoryAsync(int categoryId);
     Task<List<Pokemon>> GetPokemonByCategoriesAsync(int categoryId);
     bool CategoryExists(int categoryId);
+    bool CategoryExists(string categoryName);
+    Task<CategoryDto> CreateAsync(CategoryDto categoryDto);
+    Task<CategoryDto> UpdateAsync(int categoryId, CategoryDto categoryDto);
+    Task<CategoryDto> DeleteAsync(int categoryId);
   }
 }

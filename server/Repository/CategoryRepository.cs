@@ -2,6 +2,8 @@ using server.Data;
 using server.Interfaces;
 using server.Models;
 using Microsoft.EntityFrameworkCore;
+using server.Dto;
+using AutoMapper;
 
 namespace server.Repository
 {
@@ -9,14 +11,43 @@ namespace server.Repository
   {
     private readonly DataContext _context;
 
-    public CategoryRepository(DataContext context)
+    private readonly IMapper _mapper;
+
+    public CategoryRepository(DataContext context, IMapper mapper)
     {
       _context = context;
+      _mapper = mapper;
     }
 
     public bool CategoryExists(int categoryId)
     {
       return _context.Categories.Any(c => c.Id == categoryId && c.Hidden == false);
+    }
+    public bool CategoryExists(string categoryName)
+    {
+      return _context.Categories.Any(c => c.Name.ToLower() == categoryName.ToLower() && c.Hidden == false);
+    }
+
+    public async Task<CategoryDto> CreateAsync(CategoryDto categoryDto)
+    {
+      await _context.Categories.AddAsync(_mapper.Map<Category>(categoryDto));
+      await _context.SaveChangesAsync();
+      return categoryDto;
+    }
+
+    public async Task<CategoryDto> UpdateAsync(int categoryId, CategoryDto categoryDto)
+    {
+      var category = _mapper.Map<Category>(categoryDto);
+
+      _context.Categories.Update(category);
+      await _context.SaveChangesAsync();
+
+      return categoryDto;
+    }
+
+    public Task<CategoryDto> DeleteAsync(int categoryId)
+    {
+      throw new NotImplementedException();
     }
 
     public async Task<List<Category>> GetCategoriesAsync()

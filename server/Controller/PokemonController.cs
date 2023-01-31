@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using server.Data;
+using server.Dto;
 using server.Interfaces;
 using server.Models;
 
@@ -59,6 +55,34 @@ namespace server.Controller
         return BadRequest(ModelState);
 
       return Ok(pokemonRating);
+    }
+
+    [HttpPost("{ownerId}&{categoryId}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    public async Task<ActionResult<PokemonDto>> CreateAsync([FromRoute] int ownerId, [FromRoute] int categoryId, [FromBody] PokemonDto pokemonDto)
+    {
+      if (pokemonDto == null)
+        return BadRequest(ModelState);
+
+      if (!_pokemonRepository.PokemonExists(pokemonDto.Name))
+      {
+        ModelState.AddModelError("", "Pokemon is already exists");
+        return StatusCode(422, ModelState);
+      }
+
+      if (!ModelState.IsValid)
+        return BadRequest(ModelState);
+
+      try
+      {
+        await _pokemonRepository.CreateAsync(ownerId, categoryId, pokemonDto);
+        return Ok(pokemonDto);
+      }
+      catch (Exception e)
+      {
+        return StatusCode(500, e);
+      }
     }
   }
 }

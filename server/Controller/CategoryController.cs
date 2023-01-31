@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using server.Data;
+using server.Dto;
 using server.Interfaces;
 using server.Models;
 
@@ -45,7 +46,7 @@ namespace server.Controller
     [HttpGet("{categoryId}/pokemon")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<Pokemon>))]
     [ProducesResponseType(404)]
-    public async Task<IActionResult> GetPokemonByCategoryIdAsync(int categoryId)
+    public async Task<IActionResult> GetPokemonByCategoryIdAsync([FromRoute] int categoryId)
     {
       if (!_categoryRepository.CategoryExists(categoryId))
         return NotFound();
@@ -57,5 +58,66 @@ namespace server.Controller
 
       return Ok(pokemon);
     }
+
+    [HttpPost]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    public async Task<ActionResult<CategoryDto>> CreateAsync([FromBody] CategoryDto categoryDto)
+    {
+      if (categoryDto == null)
+        return BadRequest();
+
+      if (!_categoryRepository.CategoryExists(categoryDto.Name))
+      {
+        ModelState.AddModelError("", "Category is already exists");
+        return StatusCode(422, ModelState);
+      }
+
+      if (!ModelState.IsValid)
+        return BadRequest(ModelState);
+
+      try
+      {
+        await _categoryRepository.CreateAsync(categoryDto);
+        return Ok(categoryDto);
+      }
+      catch (Exception e)
+      {
+        return StatusCode(500, e);
+      }
+    }
+
+    [HttpPut("{categoryId}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    public async Task<ActionResult<CategoryDto>> UpdateAsync([FromRoute] int categoryId, [FromBody] CategoryDto categoryDto)
+    {
+      if (categoryDto == null)
+        return BadRequest("Null");
+
+      if (categoryId != categoryDto.Id)
+        return BadRequest("Category is not exists");
+
+      if (!_categoryRepository.CategoryExists(categoryDto.Name))
+      {
+        ModelState.AddModelError("", "Category is already exists");
+        return StatusCode(422, ModelState);
+      }
+
+      if (!ModelState.IsValid)
+        return BadRequest(ModelState);
+
+      try
+      {
+        await _categoryRepository.UpdateAsync(categoryId, categoryDto);
+        return Ok(categoryDto);
+      }
+      catch (Exception e)
+      {
+        return StatusCode(500, e);
+      }
+    }
+
+    
   }
 }

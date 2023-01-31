@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "NGVEnEmybTqktH93f7+lCf0EhQvMw/Rlnpudl3F7rbwX9YgfkvN3/JIyZ1I2GUR5HW2mhR+eszW4Bu7md9zEgg==",
+  "dgSpecHash": "X5baSD6GldViWoq2cKPX+bH9HUEIZNq9qLOLQua0Ae0wiWUKrzAKEFnU3u9hoexIv+djfeptE9VWW0xc1dxrkQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\Marine\\Desktop\\.NET-BootCamp-X-VI\\server\\api.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Marine\\.nuget\\packages\\automapper\\12.0.0\\automapper.12.0.0.nupkg.sha512",
+    "C:\\Users\\Marine\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\Marine\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.0\\automapper.extensions.microsoft.dependencyinjection.12.0.0.nupkg.sha512",
     "C:\\Users\\Marine\\.nuget\\packages\\azure.core\\1.24.0\\azure.core.1.24.0.nupkg.sha512",
     "C:\\Users\\Marine\\.nuget\\packages\\azure.identity\\1.6.0\\azure.identity.1.6.0.nupkg.sha512",
