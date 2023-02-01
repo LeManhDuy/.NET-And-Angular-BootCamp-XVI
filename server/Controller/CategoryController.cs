@@ -27,17 +27,6 @@ namespace server.Controller
             return Ok(categories);
         }
 
-        [HttpGet("pagination")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
-        [ProducesResponseType(404)]
-        public async Task<IActionResult> GetCategoriesAsync(int pageIndex, int pageSize)
-        {
-            var categories = await _categoryRepository.GetCategoriesAsync(pageIndex, pageSize);
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            return Ok(categories);
-        }
-
         [HttpGet("{categoryId}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
         [ProducesResponseType(404)]
@@ -78,7 +67,7 @@ namespace server.Controller
             if (categoryDto == null)
                 return BadRequest();
 
-            if (!_categoryRepository.CategoryExists(categoryDto.Name))
+            if (_categoryRepository.CategoryExists(categoryDto.Name))
             {
                 ModelState.AddModelError("", "Category is already exists");
                 return StatusCode(422, ModelState);
@@ -109,7 +98,7 @@ namespace server.Controller
             if (categoryId != categoryDto.Id)
                 return BadRequest("Category is not exists");
 
-            if (!_categoryRepository.CategoryExists(categoryDto.Name))
+            if (_categoryRepository.CategoryExists(categoryDto.Name))
             {
                 ModelState.AddModelError("", "Category is already exists");
                 return StatusCode(422, ModelState);
@@ -148,7 +137,7 @@ namespace server.Controller
             }
         }
 
-        [HttpPut("{categoryIds}/multiarchive")]
+        [HttpPut("{categoryIds}/multiple-archive")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         public async Task<ActionResult<CategoryDto>> MultiArchiveAsync([FromRoute] string categoryIds)
@@ -188,7 +177,7 @@ namespace server.Controller
             }
         }
 
-        [HttpDelete("{categoryIds}/multiple")]
+        [HttpDelete("{categoryIds}/multiple-delete")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         public async Task<ActionResult<CategoryDto>> MultiDeleteAsync([FromRoute] string categoryIds)

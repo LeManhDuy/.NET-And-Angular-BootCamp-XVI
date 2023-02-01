@@ -8,7 +8,6 @@ namespace server.Interfaces
         Task<List<Category>> GetCategoriesAsync();
         Task<Category> GetCategoryAsync(int categoryId);
         Task<List<Pokemon>> GetPokemonByCategoriesAsync(int categoryId);
-        Task<List<Category>> GetCategoriesAsync(int pageIndex, int pageSize);
         bool CategoryExists(int categoryId);
         bool CategoryExists(string categoryName);
         Task<CategoryDto> CreateAsync(CategoryDto categoryDto);

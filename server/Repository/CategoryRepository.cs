@@ -30,80 +30,117 @@ namespace server.Repository
 
         public async Task<CategoryDto> CreateAsync(CategoryDto categoryDto)
         {
-            await _context.Categories.AddAsync(_mapper.Map<Category>(categoryDto));
-            await _context.SaveChangesAsync();
-            return categoryDto;
+            try
+            {
+                await _context.Categories.AddAsync(_mapper.Map<Category>(categoryDto));
+                await _context.SaveChangesAsync();
+                return categoryDto;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<CategoryDto> UpdateAsync(int categoryId, CategoryDto categoryDto)
         {
-            var category = await _context.Categories.FindAsync(categoryId);
-
-            if (category == null)
+            try
             {
-                throw new Exception("Category not found!");
+                var category = await _context.Categories.FindAsync(categoryId);
+
+                if (category == null)
+                {
+                    throw new Exception("Category not found!");
+                }
+
+                _mapper.Map(categoryDto, category);
+                _context.Categories.Update(category);
+                await _context.SaveChangesAsync();
+
+                return categoryDto;
             }
-
-            _mapper.Map(categoryDto, category);
-            _context.Categories.Update(category);
-            await _context.SaveChangesAsync();
-
-            return categoryDto;
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task ArchiveAsync(int categoryId)
         {
-            var category = await _context.Categories.FindAsync(categoryId);
-
-            if (category == null)
+            try
             {
-                throw new Exception("Category not found!");
-            }
+                var category = await _context.Categories.FindAsync(categoryId);
 
-            category.Hidden = !category.Hidden;
-            _context.Categories.Update(category);
-            await _context.SaveChangesAsync();
+                if (category == null)
+                {
+                    throw new Exception("Category not found!");
+                }
+
+                category.Hidden = !category.Hidden;
+                _context.Categories.Update(category);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task MultiArchiveAsync(int[] categoryIds)
         {
-            var categories = await _context.Categories.Where(c => categoryIds.Contains(c.Id)).ToListAsync();
-            foreach (var category in categories)
+            try
             {
-                category.Hidden = !category.Hidden;
+                var categories = await _context.Categories.Where(c => categoryIds.Contains(c.Id)).ToListAsync();
+                foreach (var category in categories)
+                {
+                    category.Hidden = !category.Hidden;
+                }
+                _context.Categories.UpdateRange(categories);
+                await _context.SaveChangesAsync();
             }
-            _context.Categories.UpdateRange(categories);
-            await _context.SaveChangesAsync();
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task DeleteAsync(int categoryId)
         {
-            var category = await _context.Categories.FindAsync(categoryId);
-
-            if (category == null)
+            try
             {
-                throw new Exception("Category not found!");
-            }
+                var category = await _context.Categories.FindAsync(categoryId);
 
-            _context.Categories.Remove(category);
-            await _context.SaveChangesAsync();
+                if (category == null)
+                {
+                    throw new Exception("Category not found!");
+                }
+
+                _context.Categories.Remove(category);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task MultiDeleteAsync(int[] categoryIds)
         {
-            var categories = await _context.Categories.Where(c => categoryIds.Contains(c.Id)).ToListAsync();
-            _context.Categories.RemoveRange(categories);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var categories = await _context.Categories.Where(c => categoryIds.Contains(c.Id)).ToListAsync();
+                _context.Categories.RemoveRange(categories);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<List<Category>> GetCategoriesAsync()
         {
             return await _context.Categories.Where(c => c.Hidden == false).OrderBy(c => c.Name).ToListAsync();
-        }
-
-        public async Task<List<Category>> GetCategoriesAsync(int pageIndex, int pageSize)
-        {
-            return await _context.Categories.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
         }
 
         public async Task<Category> GetCategoryAsync(int categoryId)

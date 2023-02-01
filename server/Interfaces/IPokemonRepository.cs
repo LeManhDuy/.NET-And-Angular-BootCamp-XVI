@@ -7,15 +7,24 @@ using server.Models;
 
 namespace server.Interfaces
 {
-  public interface IPokemonRepository
-  {
-    // interface-namespace
-    Task<List<PokemonDto>> GetPokemonsAsync();
-    Task<Pokemon> GetPokemonAsync(int pokemonId);
-    Task<Pokemon> GetPokemonAsync(string name);
-    decimal GetPokemonRating(int pokemonId);
-    bool PokemonExists(int pokemonId);
-    bool PokemonExists(string pokemonName);
-    Task<PokemonDto> CreateAsync(int ownerId, int categoryId, PokemonDto pokemonDto);
-  }
+    public interface IPokemonRepository
+    {
+        //custom respone
+        //update tach lam 3 phan
+        // interface-namespace
+        Task<List<PokemonDto>> GetPokemonsAsync();
+        Task<Pokemon> GetPokemonAsync(int pokemonId);
+        Task<Pokemon> GetPokemonAsync(string name);
+        decimal GetPokemonRating(int pokemonId);
+        bool PokemonExists(int pokemonId);
+        bool PokemonExists(string pokemonName);
+        Task<PokemonDto> CreateAsync(int ownerId, int categoryId, PokemonDto pokemonDto);
+        Task<PokemonDto> UpdatePokemonAsync(int pokemonId, PokemonDto pokemonDto);
+        Task<bool> UpdatePokemonCategoryAsync(int pokemonId, int categoryId);
+        Task ArchiveAsync(int pokemonId);
+        Task MultiArchiveAsync(int[] pokemonId);
+        Task DeleteAsync(int pokemonId);
+        Task MultiDeleteAsync(int[] pokemonId);
+
+    }
 }
