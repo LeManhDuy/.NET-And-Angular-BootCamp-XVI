@@ -19,9 +19,20 @@ namespace server.Controller
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> GetCategoryAsync()
+        public async Task<IActionResult> GetCategoriesAsync()
         {
             var categories = await _categoryRepository.GetCategoriesAsync();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            return Ok(categories);
+        }
+
+        [HttpGet("pagination")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> GetCategoriesAsync(int pageIndex, int pageSize)
+        {
+            var categories = await _categoryRepository.GetCategoriesAsync(pageIndex, pageSize);
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             return Ok(categories);
@@ -118,6 +129,84 @@ namespace server.Controller
             }
         }
 
+        [HttpPut("{categoryId}/archive")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public async Task<ActionResult<CategoryDto>> ArchiveAsync([FromRoute] int categoryId)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
+            try
+            {
+                await _categoryRepository.ArchiveAsync(categoryId);
+                return Ok("Archive successfully!");
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e);
+            }
+        }
+
+        [HttpPut("{categoryIds}/multiarchive")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public async Task<ActionResult<CategoryDto>> MultiArchiveAsync([FromRoute] string categoryIds)
+        {
+            var categoryIdArray = categoryIds.Split(',').Select(x => Convert.ToInt32(x)).ToArray();
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
+            {
+                await _categoryRepository.MultiArchiveAsync(categoryIdArray);
+                return Ok("Multi archive successfully!");
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e);
+            }
+        }
+
+        [HttpDelete("{categoryId}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public async Task<ActionResult<CategoryDto>> DeleteAsync([FromRoute] int categoryId)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
+            {
+                await _categoryRepository.DeleteAsync(categoryId);
+                return Ok("Delete successfully!");
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e);
+            }
+        }
+
+        [HttpDelete("{categoryIds}/multiple")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public async Task<ActionResult<CategoryDto>> MultiDeleteAsync([FromRoute] string categoryIds)
+        {
+            var categoryIdArray = categoryIds.Split(',').Select(x => Convert.ToInt32(x)).ToArray();
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
+            {
+                await _categoryRepository.MultiDeleteAsync(categoryIdArray);
+                return Ok("Multi delete successfully!");
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e);
+            }
+        }
     }
 }
