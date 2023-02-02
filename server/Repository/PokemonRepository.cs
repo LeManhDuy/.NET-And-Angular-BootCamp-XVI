@@ -5,6 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using server.Dto;
 using AutoMapper;
 using System.Linq;
+using api.Filter;
+using api.Wrappers;
+using api.Helper;
+using Azure.Core;
+using api.Services;
 
 namespace server.Repository
 {
@@ -14,27 +19,36 @@ namespace server.Repository
         // ctor
         private readonly IMapper _mapper;
         private readonly DataContext _context;
-        public PokemonRepository(IMapper mapper, DataContext context)
+        private readonly IUriService _uriService;
+        public PokemonRepository(IMapper mapper, DataContext context, IUriService uriService)
         {
             _mapper = mapper;
             _context = context;
+            _uriService = uriService;
         }
 
-        public async Task<List<PokemonDto>> GetPokemonsAsync()
+        public async Task<List<PokemonDto>> GetPokemonsAsync(PaginationFilter filter)
         {
-            return await _context.Pokemons.Where(p => p.Hidden == false)
-                                          .Include(p => p.PokemonCategories)
-                                          .ThenInclude(pc => pc.Category)
-                                          .Select(p => new PokemonDto
-                                          {
-                                              Id = p.Id,
-                                              Name = p.Name,
-                                              BirthDate = p.BirthDate,
-                                              CategoryName = p.PokemonCategories
-                                                              .Where(pc => pc.Category.Hidden == false)
-                                                              .Select(pc => pc.Category.Name).ToList()
-                                          })
-                                          .ToListAsync();
+            var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
+
+            var pagedData = await _context.Pokemons
+                              .Where(p => p.Hidden == false)
+                              .Include(p => p.PokemonCategories)
+                              .ThenInclude(pc => pc.Category)
+                              .Select(p => new PokemonDto
+                              {
+                                  Id = p.Id,
+                                  Name = p.Name,
+                                  BirthDate = p.BirthDate,
+                                  CategoryName = p.PokemonCategories
+                                                  .Where(pc => pc.Category.Hidden == false)
+                                                  .Select(pc => pc.Category.Name).ToList()
+                              })
+                              .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                              .Take(validFilter.PageSize)
+                              .ToListAsync();
+
+            return pagedData;
         }
 
         public async Task<PokemonDto> GetPokemonAsync(int pokemonId)

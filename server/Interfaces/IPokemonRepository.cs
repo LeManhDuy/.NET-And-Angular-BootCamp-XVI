@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.Filter;
 using server.Dto;
 using server.Models;
 
@@ -12,7 +13,7 @@ namespace server.Interfaces
         //custom respone
         //update tach lam 3 phan
         // interface-namespace
-        Task<List<PokemonDto>> GetPokemonsAsync();
+        Task<List<PokemonDto>> GetPokemonsAsync(PaginationFilter filter);
         Task<PokemonDto> GetPokemonAsync(int pokemonId);
         Task<Pokemon> GetPokemonAsync(string name);
         decimal GetPokemonRating(int pokemonId);

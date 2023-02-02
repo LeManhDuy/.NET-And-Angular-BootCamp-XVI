@@ -1,8 +1,13 @@
+using api.Filter;
+using api.Helper;
+using api.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using server.Data;
 using server.Dto;
 using server.Interfaces;
 using server.Models;
+using server.Repository;
 
 namespace server.Controller
 {
@@ -11,20 +16,39 @@ namespace server.Controller
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryRepository _categoryRepository;
-        public CategoryController(ICategoryRepository categoryRepository)
+        private readonly DataContext _context;
+        private readonly IUriService _uriService;
+        public CategoryController(ICategoryRepository categoryRepository, DataContext context, IUriService uriService)
         {
             _categoryRepository = categoryRepository;
+            _context = context;
+            _uriService = uriService;
         }
 
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> GetCategoriesAsync()
+        public async Task<IActionResult> GetCategoriesAsync([FromQuery] PaginationFilter filter)
         {
-            var categories = await _categoryRepository.GetCategoriesAsync();
+            //var categories = await _categoryRepository.GetCategoriesAsync();
+            //if (!ModelState.IsValid)
+            //    return BadRequest(ModelState);
+            //return Ok(categories);
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            return Ok(categories);
+
+            var route = Request.Path.Value;
+
+            var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
+
+            var pagedData = await _categoryRepository.GetCategoriesAsync(filter);
+
+            var totalRecords = await _context.Pokemons.CountAsync();
+
+            var pagedReponse = PaginationHelper.CreatePagedReponse<Category>(pagedData, validFilter, totalRecords, _uriService, route);
+
+            return Ok(pagedReponse);
         }
 
         [HttpGet("{categoryId}")]

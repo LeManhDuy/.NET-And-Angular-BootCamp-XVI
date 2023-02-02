@@ -1,8 +1,13 @@
+using api.Filter;
+using api.Helper;
+using api.Services;
+using api.Wrappers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using server.Data;
 using server.Dto;
 using server.Interfaces;
 using server.Models;
-using server.Repository;
 
 namespace server.Controller
 {
@@ -12,20 +17,34 @@ namespace server.Controller
     public class PokemonController : ControllerBase
     {
         private readonly IPokemonRepository _pokemonRepository;
-        public PokemonController(IPokemonRepository pokemonRepository)
+        private readonly IUriService _uriService;
+        private readonly DataContext _context;
+        public PokemonController(IPokemonRepository pokemonRepository, DataContext context, IUriService uriService)
         {
             _pokemonRepository = pokemonRepository;
+            _uriService = uriService;
+            _context = context;
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Pokemon>))]
+        [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> GetPokemonAsync()
+        public async Task<IActionResult> GetPokemonAsync([FromQuery] PaginationFilter filter)
         {
-            var pokemon = await _pokemonRepository.GetPokemonsAsync();
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            return Ok(pokemon);
+
+            var route = Request.Path.Value;
+
+            var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
+
+            var pagedData = await _pokemonRepository.GetPokemonsAsync(filter);
+
+            var totalRecords = await _context.Pokemons.CountAsync();
+
+            var pagedReponse = PaginationHelper.CreatePagedReponse<PokemonDto>(pagedData, validFilter, totalRecords, _uriService, route);
+
+            return Ok(pagedReponse);
         }
 
         [HttpGet("{pokemonId}")]
@@ -36,12 +55,12 @@ namespace server.Controller
             if (!_pokemonRepository.PokemonExists(pokemonId))
                 return NotFound();
 
-            var pokemon = await _pokemonRepository.GetPokemonAsync(pokemonId);
-
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(pokemon);
+            var pokemon = await _pokemonRepository.GetPokemonAsync(pokemonId);
+
+            return Ok(new Response<PokemonDto>(pokemon));
         }
 
         [HttpGet("{pokemonId}/rating")]

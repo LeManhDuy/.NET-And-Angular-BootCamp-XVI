@@ -4,6 +4,7 @@ using server.Models;
 using Microsoft.EntityFrameworkCore;
 using server.Dto;
 using AutoMapper;
+using api.Filter;
 
 namespace server.Repository
 {
@@ -149,9 +150,16 @@ namespace server.Repository
             }
         }
 
-        public async Task<List<Category>> GetCategoriesAsync()
+        public async Task<List<Category>> GetCategoriesAsync(PaginationFilter filter)
         {
-            return await _context.Categories.Where(c => c.Hidden == false).OrderBy(c => c.Name).ToListAsync();
+            var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
+            var data = await _context.Categories
+                                        .Where(c => c.Hidden == false)
+                                        .OrderBy(c => c.Name)
+                                        .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                                        .Take(validFilter.PageSize)
+                                        .ToListAsync();
+            return data;
         }
 
         public async Task<Category> GetCategoryAsync(int categoryId)
