@@ -58,10 +58,10 @@ namespace server.Controller
             return Ok(pokemonRating);
         }
 
-        [HttpPost("{ownerId}&{categoryId}")]
+        [HttpPost("{ownerIds}&{categoryIds}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public async Task<ActionResult<PokemonDto>> CreateAsync([FromRoute] int ownerId, [FromRoute] int categoryId, [FromBody] PokemonDto pokemonDto)
+        public async Task<ActionResult<PokemonDto>> CreateAsync([FromRoute] string ownerIds, [FromRoute] string categoryIds, [FromBody] PokemonDto pokemonDto)
         {
             if (pokemonDto == null)
                 return BadRequest("Null");
@@ -77,7 +77,9 @@ namespace server.Controller
 
             try
             {
-                await _pokemonRepository.CreateAsync(ownerId, categoryId, pokemonDto);
+                var categoryIdArray = categoryIds.Split(',').Select(x => Convert.ToInt32(x)).ToArray();
+                var ownerIdArray = ownerIds.Split(',').Select(x => Convert.ToInt32(x)).ToArray();
+                await _pokemonRepository.CreateAsync(ownerIdArray, categoryIdArray, pokemonDto);
                 return Ok(pokemonDto);
             }
             catch (Exception e)
@@ -117,21 +119,45 @@ namespace server.Controller
             }
         }
 
-        [HttpPut("{pokemonId}&{categoryId}/category")]
+        [HttpPut("{pokemonId}&{categoryIds}/category")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public async Task<ActionResult<PokemonDto>> UpdatePokemonCategoryAsync([FromRoute] int pokemonId, [FromRoute] int categoryId)
+        public async Task<ActionResult<PokemonDto>> UpdatePokemonCategoryAsync([FromRoute] int pokemonId, [FromRoute] string categoryIds)
         {
             if (!_pokemonRepository.PokemonExists(pokemonId))
-                return BadRequest("Pokemon is not exists");
+                return NotFound("Pokemon is not exists");
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             try
             {
-                await _pokemonRepository.UpdatePokemonCategoryAsync(pokemonId, categoryId);
-                return Ok();
+                var categoryIdArray = categoryIds.Split(',').Select(x => Convert.ToInt32(x)).ToArray();
+                await _pokemonRepository.UpdatePokemonCategoryAsync(pokemonId, categoryIdArray);
+                return Ok("Update pokemon category successfully");
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e);
+            }
+        }
+
+        [HttpPut("{pokemonId}&{ownerIds}/owner")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public async Task<ActionResult<PokemonDto>> UpdatePokemonOwnerAsync([FromRoute] int pokemonId, [FromRoute] string ownerIds)
+        {
+            if (!_pokemonRepository.PokemonExists(pokemonId))
+                return NotFound("Pokemon is not exists");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
+            {
+                var ownerIdArray = ownerIds.Split(',').Select(x => Convert.ToInt32(x)).ToArray();
+                await _pokemonRepository.UpdatePokemonOwnerAsync(pokemonId, ownerIdArray);
+                return Ok("Update pokemon owner successfully");
             }
             catch (Exception e)
             {

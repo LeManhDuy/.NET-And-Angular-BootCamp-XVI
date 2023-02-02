@@ -30,14 +30,27 @@ namespace server.Repository
                                               Id = p.Id,
                                               Name = p.Name,
                                               BirthDate = p.BirthDate,
-                                              CategoryName = p.PokemonCategories.FirstOrDefault().Category.Name
+                                              CategoryName = p.PokemonCategories
+                                                              .Where(pc => pc.Category.Hidden == false)
+                                                              .Select(pc => pc.Category.Name).ToList()
                                           })
                                           .ToListAsync();
         }
 
-        public async Task<Pokemon> GetPokemonAsync(int pokemonId)
+        public async Task<PokemonDto> GetPokemonAsync(int pokemonId)
         {
             return await _context.Pokemons.Where(p => p.Hidden == false && p.Id == pokemonId)
+                                          .Include(p => p.PokemonCategories)
+                                          .ThenInclude(pc => pc.Category)
+                                          .Select(p => new PokemonDto
+                                          {
+                                              Id = p.Id,
+                                              Name = p.Name,
+                                              BirthDate = p.BirthDate,
+                                              CategoryName = p.PokemonCategories
+                                                              .Where(pc => pc.Category.Hidden == false)
+                                                              .Select(pc => pc.Category.Name).ToList()
+                                          })
                                           .FirstOrDefaultAsync();
         }
 
@@ -67,37 +80,45 @@ namespace server.Repository
             return _context.Pokemons.Any(p => p.Hidden == false && p.Name.ToLower() == pokemonName.ToLower());
         }
 
-        public async Task<PokemonDto> CreateAsync(int ownerId, int categoryId, PokemonDto pokemonDto)
+        public async Task<PokemonDto> CreateAsync(int[] ownerIdArray, int[] categoryIdArray, PokemonDto pokemonDto)
         {
             try
             {
+                var categories = _context.Categories.Count(c => categoryIdArray.Contains(c.Id) && c.Hidden == false);
+                if (categories != categoryIdArray.Length)
+                    throw new Exception("One or more categories not found!");
+
+                var owners = _context.Owners.Count(c => ownerIdArray.Contains(c.Id) && c.Hidden == false);
+                if (owners != ownerIdArray.Length)
+                    throw new Exception("One or more owners not found!");
+
                 var pokemon = _mapper.Map<Pokemon>(pokemonDto);
-                if (pokemon == null)
-                {
-                    throw new Exception("Pokemon not found!");
-                }
+                await _context.Pokemons.AddAsync(pokemon);
+                await _context.SaveChangesAsync();
 
-                var pokemonOwnerEntity = await _context.Owners.Where(o => o.Id == ownerId).FirstOrDefaultAsync();
-                if (pokemonOwnerEntity != null)
+                var pokemonCategories = new List<PokemonCategory>();
+                foreach (var newCategoryId in categoryIdArray)
                 {
-                    var pokemonOwner = new PokemonOwner()
+                    var item = new PokemonCategory()
                     {
-                        Owner = pokemonOwnerEntity,
-                        Pokemon = pokemon,
+                        PokemonId = pokemon.Id,
+                        CategoryId = newCategoryId
                     };
-                    await _context.AddAsync(pokemonOwner);
+                    pokemonCategories.Add(item);
                 }
+                _context.PokemonCategories.AddRange(pokemonCategories);
 
-                var pokemonCategoryEntity = await _context.Categories.Where(c => c.Id == categoryId).FirstOrDefaultAsync();
-                if (pokemonCategoryEntity != null)
+                var pokemonOwners = new List<PokemonOwner>();
+                foreach (var newOwnerId in ownerIdArray)
                 {
-                    var pokemonCategory = new PokemonCategory()
+                    var item = new PokemonOwner()
                     {
-                        Category = pokemonCategoryEntity,
-                        Pokemon = pokemon,
+                        PokemonId = pokemon.Id,
+                        OwnerId = newOwnerId
                     };
-                    await _context.AddAsync(pokemonCategory);
+                    pokemonOwners.Add(item);
                 }
+                _context.PokemonOwners.AddRange(pokemonOwners);
 
                 await _context.SaveChangesAsync();
                 return pokemonDto;
@@ -108,27 +129,71 @@ namespace server.Repository
             }
         }
 
-        public async Task<bool> UpdatePokemonCategoryAsync(int pokemonId, int categoryId)
+        public async Task<bool> UpdatePokemonCategoryAsync(int pokemonId, int[] categoryIdArray)
         {
             try
             {
-                var pokemon = await _context.Pokemons.FindAsync(pokemonId);
-                var category = await _context.Categories.FindAsync(categoryId);
-                if (pokemon == null || category == null)
+                var pokemon = await _context.Pokemons.Where(p => p.Id == pokemonId && p.Hidden == false).FirstOrDefaultAsync();
+                if (pokemon == null)
+                    throw new Exception("Pokemon not found!");
+
+                var categories = _context.Categories.Count(c => categoryIdArray.Contains(c.Id) && c.Hidden == false);
+                if (categories != categoryIdArray.Length)
+                    throw new Exception("One or more categories not found!");
+
+                var idPokemonCategoryList = await _context.PokemonCategories.Where(pc => pc.PokemonId == pokemonId).ToListAsync();
+                _context.PokemonCategories.RemoveRange(idPokemonCategoryList);
+
+                var pokemonCategories = new List<PokemonCategory>();
+                foreach (var newId in categoryIdArray)
                 {
-                    return false;
+                    var item = new PokemonCategory()
+                    {
+                        PokemonId = pokemonId,
+                        CategoryId = newId
+                    };
+                    pokemonCategories.Add(item);
                 }
 
-                var pokemonCategory = await _context.PokemonCategories.Where(pc => pc.PokemonId == pokemonId && pc.CategoryId == categoryId).FirstOrDefaultAsync();
-
-                if (pokemonCategory != null)
-                {
-                    pokemonCategory.PokemonId = pokemonId;
-                    pokemonCategory.CategoryId = 1;
-                    _context.PokemonCategories.Update(pokemonCategory);
-                }
-
+                _context.PokemonCategories.AddRange(pokemonCategories);
                 await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<bool> UpdatePokemonOwnerAsync(int pokemonId, int[] ownerIdArray)
+        {
+            try
+            {
+                var pokemon = await _context.Pokemons.Where(p => p.Id == pokemonId && p.Hidden == false).FirstOrDefaultAsync();
+                if (pokemon == null)
+                    throw new Exception("Pokemon not found!");
+
+                var owners = _context.Owners.Count(c => ownerIdArray.Contains(c.Id) && c.Hidden == false);
+                if (owners != ownerIdArray.Length)
+                    throw new Exception("One or more owners not found!");
+
+                var idPokemonOwnerList = await _context.PokemonOwners.Where(pc => pc.PokemonId == pokemonId).ToListAsync();
+                _context.PokemonOwners.RemoveRange(idPokemonOwnerList);
+
+                var pokemonOwners = new List<PokemonOwner>();
+                foreach (var newId in ownerIdArray)
+                {
+                    var item = new PokemonOwner()
+                    {
+                        PokemonId = pokemonId,
+                        OwnerId = newId
+                    };
+                    pokemonOwners.Add(item);
+                }
+                _context.PokemonOwners.AddRange(pokemonOwners);
+                await _context.SaveChangesAsync();
+
                 return true;
             }
             catch (Exception ex)
@@ -141,12 +206,9 @@ namespace server.Repository
         {
             try
             {
-                var pokemon = await _context.Pokemons.FindAsync(pokemonId);
-
+                var pokemon = await _context.Pokemons.Where(p => p.Id == pokemonId && p.Hidden == false).FirstOrDefaultAsync();
                 if (pokemon == null)
-                {
                     throw new Exception("Pokemon not found!");
-                }
 
                 _mapper.Map(pokemonDto, pokemon);
                 _context.Pokemons.Update(pokemon);
@@ -164,12 +226,9 @@ namespace server.Repository
         {
             try
             {
-                var pokemon = await _context.Pokemons.FindAsync(pokemonId);
-
+                var pokemon = await _context.Pokemons.Where(p => p.Id == pokemonId).FirstOrDefaultAsync();
                 if (pokemon == null)
-                {
                     throw new Exception("Pokemon not found!");
-                }
 
                 pokemon.Hidden = !pokemon.Hidden;
                 _context.Pokemons.Update(pokemon);
@@ -185,6 +244,10 @@ namespace server.Repository
         {
             try
             {
+                var checkValid = _context.Pokemons.Count(c => pokemonId.Contains(c.Id));
+                if (checkValid != pokemonId.Length)
+                    throw new Exception("One or more pokemon not found!");
+
                 var pokemons = await _context.Pokemons.Where(c => pokemonId.Contains(c.Id)).ToListAsync();
                 foreach (var pokemon in pokemons)
                 {
@@ -205,23 +268,17 @@ namespace server.Repository
             {
                 var pokemon = await _context.Pokemons.FindAsync(pokemonId);
                 if (pokemon == null)
-                {
                     throw new Exception("Pokemon not found!");
-                }
                 _context.Pokemons.Remove(pokemon);
 
                 var pokemonsOwner = await _context.PokemonOwners.Where(c => c.PokemonId == pokemonId).ToListAsync();
                 if (pokemonsOwner == null)
-                {
                     throw new Exception("Pokemon owner not found!");
-                }
                 _context.PokemonOwners.RemoveRange(pokemonsOwner);
 
                 var pokemonsCategory = await _context.PokemonCategories.Where(c => c.PokemonId == pokemonId).ToListAsync();
                 if (pokemonsCategory == null)
-                {
                     throw new Exception("Pokemon category not found!");
-                }
                 _context.PokemonCategories.RemoveRange(pokemonsCategory);
 
                 await _context.SaveChangesAsync();
@@ -236,6 +293,10 @@ namespace server.Repository
         {
             try
             {
+                var checkValid = _context.Pokemons.Count(c => pokemonId.Contains(c.Id));
+                if (checkValid != pokemonId.Length)
+                    throw new Exception("One or more pokemon not found!");
+
                 var pokemons = await _context.Pokemons.Where(c => pokemonId.Contains(c.Id)).ToListAsync();
                 _context.Pokemons.RemoveRange(pokemons);
 
