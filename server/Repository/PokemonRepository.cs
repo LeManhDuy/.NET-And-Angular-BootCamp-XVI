@@ -68,12 +68,6 @@ namespace server.Repository
                                           .FirstOrDefaultAsync();
         }
 
-        public async Task<Pokemon> GetPokemonAsync(string name)
-        {
-            return await _context.Pokemons.Where(p => p.Hidden == false && p.Name == name)
-                                          .FirstOrDefaultAsync();
-        }
-
         public decimal GetPokemonRating(int pokemonId)
         {
             var reviews = _context.Reviews.Where(r => r.Pokemon.Id == pokemonId);
@@ -89,9 +83,9 @@ namespace server.Repository
             return _context.Pokemons.Any(p => p.Hidden == false && p.Id == pokemonId);
         }
 
-        public bool PokemonExists(string pokemonName)
+        public bool PokemonExists(string pokemonName, int pokemonId)
         {
-            return _context.Pokemons.Any(p => p.Hidden == false && p.Name.ToLower() == pokemonName.ToLower());
+            return _context.Pokemons.Any(p => p.Id != pokemonId && p.Name.ToLower() == pokemonName.ToLower());
         }
 
         public async Task<PokemonDto> CreateAsync(int[] ownerIdArray, int[] categoryIdArray, PokemonDto pokemonDto)
@@ -139,7 +133,7 @@ namespace server.Repository
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("Message: " + ex.Message);
             }
         }
 
@@ -176,7 +170,7 @@ namespace server.Repository
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("Message: " + ex.Message);
             }
         }
 
@@ -212,7 +206,7 @@ namespace server.Repository
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("Message: " + ex.Message);
             }
         }
 
@@ -232,7 +226,7 @@ namespace server.Repository
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("Message: " + ex.Message);
             }
         }
 
@@ -250,7 +244,7 @@ namespace server.Repository
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("Message: " + ex.Message);
             }
         }
 
@@ -272,7 +266,7 @@ namespace server.Repository
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("Message: " + ex.Message);
             }
         }
 
@@ -280,7 +274,7 @@ namespace server.Repository
         {
             try
             {
-                var pokemon = await _context.Pokemons.FindAsync(pokemonId);
+                var pokemon = await _context.Pokemons.Where(p => p.Id == pokemonId && p.Hidden == true).FirstOrDefaultAsync();
                 if (pokemon == null)
                     throw new Exception("Pokemon not found!");
                 _context.Pokemons.Remove(pokemon);
@@ -299,7 +293,7 @@ namespace server.Repository
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("Message: " + ex.Message);
             }
         }
 
@@ -311,7 +305,7 @@ namespace server.Repository
                 if (checkValid != pokemonId.Length)
                     throw new Exception("One or more pokemon not found!");
 
-                var pokemons = await _context.Pokemons.Where(c => pokemonId.Contains(c.Id)).ToListAsync();
+                var pokemons = await _context.Pokemons.Where(c => pokemonId.Contains(c.Id) && c.Hidden == true).ToListAsync();
                 _context.Pokemons.RemoveRange(pokemons);
 
                 var pokemonsOwner = await _context.PokemonOwners.Where(c => pokemonId.Contains(c.PokemonId)).ToListAsync();
@@ -324,7 +318,7 @@ namespace server.Repository
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("Message: " + ex.Message);
             }
         }
     }

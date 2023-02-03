@@ -24,9 +24,10 @@ namespace server.Repository
         {
             return _context.Categories.Any(c => c.Id == categoryId && c.Hidden == false);
         }
-        public bool CategoryExists(string categoryName)
+
+        public bool CategoryExists(string categoryName, int categoryId)
         {
-            return _context.Categories.Any(c => c.Name.ToLower() == categoryName.ToLower() && c.Hidden == false);
+            return _context.Categories.Any(c => c.Name.ToLower() == categoryName.ToLower() && c.Id != categoryId);
         }
 
         public async Task<CategoryDto> CreateAsync(CategoryDto categoryDto)
@@ -39,7 +40,7 @@ namespace server.Repository
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("Message: " + ex.Message);
             }
         }
 
@@ -47,7 +48,7 @@ namespace server.Repository
         {
             try
             {
-                var category = await _context.Categories.FindAsync(categoryId);
+                var category = await _context.Categories.Where(p => p.Id == categoryId && p.Hidden == false).FirstOrDefaultAsync();
 
                 if (category == null)
                     throw new Exception("Category not found!");
@@ -60,7 +61,7 @@ namespace server.Repository
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("Message: " + ex.Message);
             }
         }
 
@@ -79,7 +80,7 @@ namespace server.Repository
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("Message: " + ex.Message);
             }
         }
 
@@ -102,7 +103,7 @@ namespace server.Repository
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("Message: " + ex.Message);
             }
         }
 
@@ -110,7 +111,7 @@ namespace server.Repository
         {
             try
             {
-                var category = await _context.Categories.FindAsync(categoryId);
+                var category = await _context.Categories.Where(p => p.Id == categoryId && p.Hidden == true).FirstOrDefaultAsync();
                 if (category == null)
                     throw new Exception("Category not found!");
                 _context.Categories.Remove(category);
@@ -124,7 +125,7 @@ namespace server.Repository
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("Message: " + ex.Message);
             }
         }
 
@@ -132,7 +133,7 @@ namespace server.Repository
         {
             try
             {
-                var checkValid = _context.Categories.Where(c => categoryIds.Contains(c.Id)).Count();
+                var checkValid = _context.Categories.Where(c => categoryIds.Contains(c.Id) && c.Hidden == true).Count();
                 if (checkValid != categoryIds.Length)
                     throw new Exception("One or more categories not found!");
 
@@ -146,7 +147,7 @@ namespace server.Repository
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("Message: " + ex.Message);
             }
         }
 

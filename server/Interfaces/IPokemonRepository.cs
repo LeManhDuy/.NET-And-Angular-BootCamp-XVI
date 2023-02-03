@@ -15,10 +15,9 @@ namespace server.Interfaces
         // interface-namespace
         Task<List<PokemonDto>> GetPokemonsAsync(PaginationFilter filter);
         Task<PokemonDto> GetPokemonAsync(int pokemonId);
-        Task<Pokemon> GetPokemonAsync(string name);
         decimal GetPokemonRating(int pokemonId);
         bool PokemonExists(int pokemonId);
-        bool PokemonExists(string pokemonName);
+        bool PokemonExists(string pokemonName, int pokemonId);
         Task<PokemonDto> CreateAsync(int[] ownerId, int[] categoryId, PokemonDto pokemonDto);
         Task<PokemonDto> UpdatePokemonAsync(int pokemonId, PokemonDto pokemonDto);
         Task<bool> UpdatePokemonCategoryAsync(int pokemonId, int[] categoryId);

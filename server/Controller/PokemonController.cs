@@ -85,7 +85,7 @@ namespace server.Controller
             if (pokemonDto == null)
                 return BadRequest("Null");
 
-            if (_pokemonRepository.PokemonExists(pokemonDto.Name))
+            if (_pokemonRepository.PokemonExists(pokemonDto.Name, pokemonDto.Id))
             {
                 ModelState.AddModelError("", "Pokemon is already exists");
                 return StatusCode(422, ModelState);
@@ -103,7 +103,7 @@ namespace server.Controller
             }
             catch (Exception e)
             {
-                return StatusCode(500, e);
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -118,7 +118,7 @@ namespace server.Controller
             if (pokemonId != pokemonDto.Id)
                 return BadRequest("Pokemon is not exists");
 
-            if (_pokemonRepository.PokemonExists(pokemonDto.Name))
+            if (_pokemonRepository.PokemonExists(pokemonDto.Name, pokemonDto.Id))
             {
                 ModelState.AddModelError("", "Pokemon is already exists");
                 return StatusCode(422, ModelState);
@@ -134,7 +134,7 @@ namespace server.Controller
             }
             catch (Exception e)
             {
-                return StatusCode(500, e);
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -157,7 +157,7 @@ namespace server.Controller
             }
             catch (Exception e)
             {
-                return StatusCode(500, e);
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -180,7 +180,7 @@ namespace server.Controller
             }
             catch (Exception e)
             {
-                return StatusCode(500, e);
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -199,7 +199,7 @@ namespace server.Controller
             }
             catch (Exception e)
             {
-                return StatusCode(500, e);
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -220,7 +220,7 @@ namespace server.Controller
             }
             catch (Exception e)
             {
-                return StatusCode(500, e);
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -239,7 +239,7 @@ namespace server.Controller
             }
             catch (Exception e)
             {
-                return StatusCode(500, e);
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -260,7 +260,7 @@ namespace server.Controller
             }
             catch (Exception e)
             {
-                return StatusCode(500, e);
+                return StatusCode(500, e.Message);
             }
         }
     }

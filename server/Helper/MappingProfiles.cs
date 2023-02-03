@@ -1,18 +1,21 @@
+using api.Dto;
 using AutoMapper;
 using server.Dto;
 using server.Models;
 
 namespace server.Helper
 {
-  //am-profile
-  public class MappingProfiles : Profile
-  {
-    public MappingProfiles()
+    //am-profile
+    public class MappingProfiles : Profile
     {
-      CreateMap<Pokemon, PokemonDto>();
-      CreateMap<PokemonDto, Pokemon>();
-      CreateMap<Category, CategoryDto>();
-      CreateMap<CategoryDto, Category>();
+        public MappingProfiles()
+        {
+            CreateMap<Pokemon, PokemonDto>();
+            CreateMap<PokemonDto, Pokemon>();
+            CreateMap<Category, CategoryDto>();
+            CreateMap<CategoryDto, Category>();
+            CreateMap<Country, CountryDto>();
+            CreateMap<CountryDto, Country>();
+        }
     }
-  }
 }

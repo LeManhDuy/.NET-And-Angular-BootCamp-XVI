@@ -91,7 +91,7 @@ namespace server.Controller
             if (categoryDto == null)
                 return BadRequest();
 
-            if (_categoryRepository.CategoryExists(categoryDto.Name))
+            if (_categoryRepository.CategoryExists(categoryDto.Name, categoryDto.Id))
             {
                 ModelState.AddModelError("", "Category is already exists");
                 return StatusCode(422, ModelState);
@@ -107,7 +107,7 @@ namespace server.Controller
             }
             catch (Exception e)
             {
-                return StatusCode(500, e);
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -122,7 +122,7 @@ namespace server.Controller
             if (categoryId != categoryDto.Id)
                 return BadRequest("Category is not exists");
 
-            if (_categoryRepository.CategoryExists(categoryDto.Name))
+            if (_categoryRepository.CategoryExists(categoryDto.Name, categoryDto.Id))
             {
                 ModelState.AddModelError("", "Category is already exists");
                 return StatusCode(422, ModelState);
@@ -138,7 +138,7 @@ namespace server.Controller
             }
             catch (Exception e)
             {
-                return StatusCode(500, e);
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -157,7 +157,7 @@ namespace server.Controller
             }
             catch (Exception e)
             {
-                return StatusCode(500, e);
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -178,7 +178,7 @@ namespace server.Controller
             }
             catch (Exception e)
             {
-                return StatusCode(500, e);
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -197,7 +197,7 @@ namespace server.Controller
             }
             catch (Exception e)
             {
-                return StatusCode(500, e);
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -218,7 +218,7 @@ namespace server.Controller
             }
             catch (Exception e)
             {
-                return StatusCode(500, e);
+                return StatusCode(500, e.Message);
             }
         }
     }
