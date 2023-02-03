@@ -30,11 +30,6 @@ namespace server.Controller
         [ProducesResponseType(404)]
         public async Task<IActionResult> GetCategoriesAsync([FromQuery] PaginationFilter filter)
         {
-            //var categories = await _categoryRepository.GetCategoriesAsync();
-            //if (!ModelState.IsValid)
-            //    return BadRequest(ModelState);
-            //return Ok(categories);
-
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
