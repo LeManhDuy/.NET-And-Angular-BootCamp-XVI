@@ -1,90 +1,53 @@
-﻿using server.Data;
+﻿using Faker;
+using server.Data;
 using server.Models;
 
 namespace server
 {
-  public class Seed
-  {
-    private readonly DataContext dataContext;
-    public Seed(DataContext context)
+    public class Seed
     {
-      this.dataContext = context;
-    }
-    public void SeedDataContext()
-    {
-      if (!dataContext.PokemonOwners.Any())
-      {
-        var pokemonOwners = new List<PokemonOwner>()
+        private readonly DataContext dataContext;
+        public Seed(DataContext context)
+        {
+            this.dataContext = context;
+        }
+        public void SeedDataContext()
+        {
+            for (int i = 1; i <= 1500000; i++)
+            {
+                var pokemonOwner = new PokemonOwner()
                 {
-                    new PokemonOwner()
+                    Pokemon = new Pokemon()
                     {
-                        Pokemon = new Pokemon()
-                        {
-                            Name = "Pikachu",
-                            BirthDate = new DateTime(1903,1,1),
-                            Hidden = false,
-                            PokemonCategories = new List<PokemonCategory>()
-                            {
-                                new PokemonCategory { Category = new Category() { Name = "Electric",Hidden = false,}}
-                            },
-                            Reviews = new List<Review>()
-                            {
-                                new Review { Title="Pikachu",Text = "Pickahu is the best pokemon, because it is electric", Rating = 5, Hidden = false,
-                                Reviewer = new Reviewer(){ FirstName = "Teddy", LastName = "Smith", Hidden = false, } },
-                                new Review { Title="Pikachu", Text = "Pickachu is the best a killing rocks", Rating = 5, Hidden = false,
-                                Reviewer = new Reviewer(){ FirstName = "Taylor", LastName = "Jones", Hidden = false, } },
-                                new Review { Title="Pikachu",Text = "Pickchu, pickachu, pikachu", Rating = 1, Hidden = false,
-                                Reviewer = new Reviewer(){ FirstName = "Jessica", LastName = "McGregor", Hidden = false, } },
-                            }
-                        },
-                        Owner = new Owner()
-                        {
-                            Name = "Jack",
-                            Gym = "Brocks Gym",
-                            Hidden = false,
-                            Country = new Country()
-                            {
-                                Name = "Kanto"
-                            }
-                        }
+                        Name = Name.FullName(NameFormats.WithPrefix),
+                        BirthDate = DateTime.Now.AddDays(new Random().Next(1000)),
+                        Hidden = false,
+                        PokemonCategories = new List<PokemonCategory>()
+                                {
+                                    new PokemonCategory { Category = new Category() { Name = Name.FullName(),Hidden = false,}}
+                                },
+                        Reviews = new List<Review>()
+                                {
+                                    new Review { Title=Address.City(),Text = Lorem.Sentences(3).ToString(), Rating = RandomNumber.Next(0, 10), Hidden = false,
+                                    Reviewer = new Reviewer(){ FirstName =  Name.First(), LastName = Name.Last(), Hidden = false, } },
+                                    new Review { Title=Address.City(),Text = Lorem.Sentences(3).ToString(), Rating = RandomNumber.Next(0, 10), Hidden = false,
+                                    Reviewer = new Reviewer(){ FirstName =  Name.First(), LastName = Name.Last(), Hidden = false, } }
+                                }
                     },
-
-                    new PokemonOwner()
+                    Owner = new Owner()
                     {
-                        Pokemon = new Pokemon()
+                        Name = Name.FullName(NameFormats.WithPrefix),
+                        Gym = Address.City(),
+                        Hidden = false,
+                        Country = new Models.Country()
                         {
-                            Name = "Venasuar",
-                            BirthDate = new DateTime(1903,1,1),
-                            Hidden = true,
-                            PokemonCategories = new List<PokemonCategory>()
-                            {
-                                new PokemonCategory { Category = new Category() { Name = "Leaf",Hidden = true,}}
-                            },
-                            Reviews = new List<Review>()
-                            {
-                                new Review { Title="Veasaur",Text = "Venasuar is the best pokemon, because it is electric", Rating = 5,Hidden = true,
-                                Reviewer = new Reviewer(){ FirstName = "Teddy", LastName = "Smith",Hidden = true, } },
-                                new Review { Title="Veasaur",Text = "Venasuar is the best a killing rocks", Rating = 5,Hidden = true,
-                                Reviewer = new Reviewer(){ FirstName = "Taylor", LastName = "Jones",Hidden = true, } },
-                                new Review { Title="Veasaur",Text = "Venasuar, Venasuar, Venasuar", Rating = 1,Hidden = true,
-                                Reviewer = new Reviewer(){ FirstName = "Jessica", LastName = "McGregor",Hidden = true, } },
-                            }
-                        },
-                        Owner = new Owner()
-                        {
-                            Name = "Ash",
-                            Gym = "Ashs Gym",
-                            Hidden = true,
-                            Country = new Country()
-                            {
-                                Name = "Millet Town"
-                            }
+                            Name = Address.Country()
                         }
                     }
                 };
-        dataContext.PokemonOwners.AddRange(pokemonOwners);
-        dataContext.SaveChanges();
-      }
+                dataContext.PokemonOwners.Add(pokemonOwner);
+                dataContext.SaveChanges();
+            }
+        }
     }
-  }
 }

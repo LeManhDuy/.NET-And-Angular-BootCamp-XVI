@@ -38,7 +38,7 @@ namespace api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("server.Models.Country", b =>
@@ -57,7 +57,7 @@ namespace api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Countries");
+                    b.ToTable("Countries", (string)null);
                 });
 
             modelBuilder.Entity("server.Models.Owner", b =>
@@ -84,7 +84,7 @@ namespace api.Migrations
 
                     b.HasIndex("CountryId");
 
-                    b.ToTable("Owners");
+                    b.ToTable("Owners", (string)null);
                 });
 
             modelBuilder.Entity("server.Models.Pokemon", b =>
@@ -106,7 +106,7 @@ namespace api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Pokemons");
+                    b.ToTable("Pokemons", (string)null);
                 });
 
             modelBuilder.Entity("server.Models.PokemonCategory", b =>
@@ -121,7 +121,7 @@ namespace api.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("PokemonCategories");
+                    b.ToTable("PokemonCategories", (string)null);
                 });
 
             modelBuilder.Entity("server.Models.PokemonOwner", b =>
@@ -136,7 +136,7 @@ namespace api.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("PokemonOwners");
+                    b.ToTable("PokemonOwners", (string)null);
                 });
 
             modelBuilder.Entity("server.Models.Review", b =>
@@ -171,7 +171,7 @@ namespace api.Migrations
 
                     b.HasIndex("ReviewerId");
 
-                    b.ToTable("Reviews");
+                    b.ToTable("Reviews", (string)null);
                 });
 
             modelBuilder.Entity("server.Models.Reviewer", b =>
@@ -193,7 +193,7 @@ namespace api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Reviewers");
+                    b.ToTable("Reviewers", (string)null);
                 });
 
             modelBuilder.Entity("server.Models.Owner", b =>
