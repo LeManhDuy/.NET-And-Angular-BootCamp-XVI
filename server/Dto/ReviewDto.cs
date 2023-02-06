@@ -10,5 +10,6 @@ namespace api.Dto
         public int Rating { get; set; }
         public bool Hidden { get; set; }
         public string ReviewerName { get; set; }
+        public string PokemonName { get; set; }
     }
 }

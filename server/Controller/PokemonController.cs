@@ -246,7 +246,7 @@ namespace server.Controller
         [HttpDelete("{pokemonIds}/multiple-delete")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public async Task<ActionResult<CategoryDto>> MultiDeleteAsync([FromRoute] string pokemonIds)
+        public async Task<ActionResult<PokemonDto>> MultiDeleteAsync([FromRoute] string pokemonIds)
         {
             var pokemonIdArray = pokemonIds.Split(',').Select(x => Convert.ToInt32(x)).ToArray();
 

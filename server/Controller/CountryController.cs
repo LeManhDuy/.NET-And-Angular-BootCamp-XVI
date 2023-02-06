@@ -174,7 +174,7 @@ namespace server.Controller
         [HttpPut("{countryIds}/multiple-archive")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public async Task<ActionResult<CategoryDto>> MultiArchiveAsync([FromRoute] string countryIds)
+        public async Task<ActionResult<CountryDto>> MultiArchiveAsync([FromRoute] string countryIds)
         {
             var countryIdArray = countryIds.Split(',').Select(x => Convert.ToInt32(x)).ToArray();
 

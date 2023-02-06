@@ -177,7 +177,7 @@ namespace server.Controller
         [HttpPut("{ownerId}/archive")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public async Task<ActionResult<PokemonDto>> ArchiveAsync([FromRoute] int ownerId)
+        public async Task<ActionResult<OwnerDto>> ArchiveAsync([FromRoute] int ownerId)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -196,7 +196,7 @@ namespace server.Controller
         [HttpPut("{ownerIds}/multiple-archive")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public async Task<ActionResult<PokemonDto>> MultiArchiveAsync([FromRoute] string ownerIds)
+        public async Task<ActionResult<OwnerDto>> MultiArchiveAsync([FromRoute] string ownerIds)
         {
             var ownerIdArray = ownerIds.Split(',').Select(x => Convert.ToInt32(x)).ToArray();
 
@@ -217,7 +217,7 @@ namespace server.Controller
         [HttpDelete("{ownerId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public async Task<ActionResult<PokemonDto>> DeleteAsync([FromRoute] int ownerId)
+        public async Task<ActionResult<OwnerDto>> DeleteAsync([FromRoute] int ownerId)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -236,7 +236,7 @@ namespace server.Controller
         [HttpDelete("{ownerIds}/multiple-delete")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public async Task<ActionResult<CategoryDto>> MultiDeleteAsync([FromRoute] string ownerIds)
+        public async Task<ActionResult<OwnerDto>> MultiDeleteAsync([FromRoute] string ownerIds)
         {
             var ownerIdArray = ownerIds.Split(',').Select(x => Convert.ToInt32(x)).ToArray();
 
