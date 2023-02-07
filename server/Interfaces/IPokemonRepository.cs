@@ -13,7 +13,8 @@ namespace server.Interfaces
         //custom respone
         //update tach lam 3 phan
         // interface-namespace
-        Task<List<PokemonDto>> GetPokemonsAsync(PaginationFilter filter);
+        //Task<List<PokemonDto>> GetPokemonsAsync(PaginationFilter filter);
+        Task<List<PokemonDto>> GetPokemonsAsync();
         Task<PokemonDto> GetPokemonAsync(int pokemonId);
         decimal GetPokemonRating(int pokemonId);
         bool PokemonExists(int pokemonId);
