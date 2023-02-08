@@ -1,35 +1,43 @@
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+<div class="mat-parent">
+  <mat-form-field>
+    <mat-label>Filter</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
+  </mat-form-field>
 
-  <!-- Checkbox Column -->
-  <ng-container matColumnDef="select">
-    <th mat-header-cell *matHeaderCellDef>
-      <mat-checkbox (change)="$event ? toggleAllRows() : null" [checked]="selection.hasValue() && isAllSelected()"
-        [indeterminate]="selection.hasValue() && !isAllSelected()" [aria-label]="checkboxLabel()">
-      </mat-checkbox>
-    </th>
-    <td mat-cell *matCellDef="let row">
-      <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null"
-        [checked]="selection.isSelected(row)" [aria-label]="checkboxLabel(row)">
-      </mat-checkbox>
-    </td>
-  </ng-container>
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    <!-- Checkbox Column -->
+    <!-- <ng-container matColumnDef="Select">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-checkbox (change)="$event ? toggleAllRows() : null" [checked]="selection.hasValue() && isAllSelected()"
+          [indeterminate]="selection.hasValue() && !isAllSelected()" [aria-label]="checkboxLabel()">
+        </mat-checkbox>
+      </th>
+      <td mat-cell *matCellDef="let row">
+        <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null"
+          [checked]="selection.isSelected(row)" [aria-label]="checkboxLabel(row)">
+        </mat-checkbox>
+      </td>
+    </ng-container> -->
 
-  <ng-container matColumnDef="Name">
-    <th mat-header-cell *matHeaderCellDef> Name </th>
-    <td mat-cell *matCellDef="let element"> {{element.Name}} </td>
-  </ng-container>
+    <ng-container matColumnDef="Name">
+      <th mat-header-cell *matHeaderCellDef> Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.Name}} </td>
+    </ng-container>
 
-  <ng-container matColumnDef="BirthDate">
-    <th mat-header-cell *matHeaderCellDef> Birth Date </th>
-    <td mat-cell *matCellDef="let element"> {{element.BirthDate | date: 'dd/MM/yyyy'}} </td>
-  </ng-container>
+    <ng-container matColumnDef="BirthDate">
+      <th mat-header-cell *matHeaderCellDef> Birth Date </th>
+      <td mat-cell *matCellDef="let element"> {{element.BirthDate | date: 'dd/MM/yyyy'}} </td>
+    </ng-container>
 
-  <ng-container matColumnDef="CategoryName">
-    <th mat-header-cell *matHeaderCellDef> Category Name </th>
-    <td mat-cell *matCellDef="let element"> {{element.CategoryName}} </td>
-  </ng-container>
+    <ng-container matColumnDef="CategoryName">
+      <th mat-header-cell *matHeaderCellDef> Category Name
+      </th>
+      <td mat-cell *matCellDef="let element"> {{element.CategoryName}} </td>
+    </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selection.toggle(row)">
-  </tr>
-</table>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selection.toggle(row)">
+    </tr>
+  </table>
+
+</div>

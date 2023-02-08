@@ -26,37 +26,37 @@ namespace server.Controller
       _context = context;
     }
 
-    [HttpGet]
-    [ProducesResponseType(200, Type = typeof(IEnumerable<Pokemon>))]
-    [ProducesResponseType(404)]
-    public async Task<IActionResult> GetPokemonAsync()
-    {
-      var pokemon = await _pokemonRepository.GetPokemonsAsync();
-      if (!ModelState.IsValid)
-        return BadRequest(ModelState);
-      return Ok(pokemon);
-    }
-
     // [HttpGet]
-    // [ProducesResponseType(200)]
+    // [ProducesResponseType(200, Type = typeof(IEnumerable<Pokemon>))]
     // [ProducesResponseType(404)]
-    // public async Task<IActionResult> GetPokemonAsync([FromQuery] PaginationFilter filter)
+    // public async Task<IActionResult> GetPokemonAsync()
     // {
+    //     var pokemon = await _pokemonRepository.GetPokemonsAsync();
     //     if (!ModelState.IsValid)
     //         return BadRequest(ModelState);
-
-    //     var route = Request.Path.Value;
-
-    //     var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
-
-    //     var pagedData = await _pokemonRepository.GetPokemonsAsync(filter);
-
-    //     var totalRecords = await _context.Pokemons.CountAsync();
-
-    //     var pagedReponse = PaginationHelper.CreatePagedReponse<PokemonDto>(pagedData, validFilter, totalRecords, _uriService, route);
-
-    //     return Ok(pagedReponse);
+    //     return Ok(pokemon);
     // }
+
+    [HttpGet]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> GetPokemonAsync([FromQuery] PaginationFilter filter)
+    {
+      if (!ModelState.IsValid)
+        return BadRequest(ModelState);
+
+      var route = Request.Path.Value;
+
+      var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
+
+      var pagedData = await _pokemonRepository.GetPokemonsAsync(filter);
+
+      var totalRecords = await _context.Pokemons.CountAsync();
+
+      var pagedReponse = PaginationHelper.CreatePagedReponse<PokemonDto>(pagedData, validFilter, totalRecords, _uriService, route);
+
+      return Ok(pagedReponse);
+    }
 
     [HttpGet("{pokemonId}")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<Pokemon>))]

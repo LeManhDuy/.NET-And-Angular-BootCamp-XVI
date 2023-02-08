@@ -27,47 +27,47 @@ namespace server.Repository
       _uriService = uriService;
     }
 
-    // public async Task<List<PokemonDto>> GetPokemonsAsync(PaginationFilter filter)
-    // {
-    //     var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
-
-    //     var pagedData = await _context.Pokemons
-    //                       .Where(p => p.Hidden == false)
-    //                       .Include(p => p.PokemonCategories)
-    //                       .ThenInclude(pc => pc.Category)
-    //                       .Select(p => new PokemonDto
-    //                       {
-    //                           Id = p.Id,
-    //                           Name = p.Name,
-    //                           BirthDate = p.BirthDate,
-    //                           CategoryName = p.PokemonCategories
-    //                                           .Where(pc => pc.Category.Hidden == false)
-    //                                           .Select(pc => pc.Category.Name).ToList()
-    //                       })
-    //                       .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
-    //                       .Take(validFilter.PageSize)
-    //                       .ToListAsync();
-
-    //     return pagedData;
-    // }
-
-    public async Task<List<PokemonDto>> GetPokemonsAsync()
+    public async Task<List<PokemonDto>> GetPokemonsAsync(PaginationFilter filter)
     {
-      return await _context.Pokemons.Where(p => p.Hidden == false)
-                                    .Include(p => p.PokemonCategories)
-                                    .ThenInclude(pc => pc.Category)
-                                    .Select(p => new PokemonDto
-                                    {
-                                      Id = p.Id,
-                                      Name = p.Name,
-                                      BirthDate = p.BirthDate,
-                                      CategoryName = p.PokemonCategories
+        var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
+
+        var pagedData = await _context.Pokemons
+                          .Where(p => p.Hidden == false)
+                          .Include(p => p.PokemonCategories)
+                          .ThenInclude(pc => pc.Category)
+                          .Select(p => new PokemonDto
+                          {
+                              Id = p.Id,
+                              Name = p.Name,
+                              BirthDate = p.BirthDate,
+                              CategoryName = p.PokemonCategories
                                               .Where(pc => pc.Category.Hidden == false)
                                               .Select(pc => pc.Category.Name).ToList()
-                                    })
-                                    .Take(20)
-                                    .ToListAsync();
+                          })
+                          .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                          .Take(validFilter.PageSize)
+                          .ToListAsync();
+
+        return pagedData;
     }
+
+    // public async Task<List<PokemonDto>> GetPokemonsAsync()
+    // {
+    //   return await _context.Pokemons.Where(p => p.Hidden == false)
+    //                                 .Include(p => p.PokemonCategories)
+    //                                 .ThenInclude(pc => pc.Category)
+    //                                 .Select(p => new PokemonDto
+    //                                 {
+    //                                   Id = p.Id,
+    //                                   Name = p.Name,
+    //                                   BirthDate = p.BirthDate,
+    //                                   CategoryName = p.PokemonCategories
+    //                                           .Where(pc => pc.Category.Hidden == false)
+    //                                           .Select(pc => pc.Category.Name).ToList()
+    //                                 })
+    //                                 .Take(20)
+    //                                 .ToListAsync();
+    // }
 
     public async Task<PokemonDto> GetPokemonAsync(int pokemonId)
     {
