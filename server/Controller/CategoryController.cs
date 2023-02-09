@@ -1,6 +1,7 @@
 using api.Filter;
 using api.Helper;
 using api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using server.Data;
@@ -16,20 +17,31 @@ namespace server.Controller
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryRepository _categoryRepository;
+        private readonly IAuthRepository _authRepository;
         private readonly DataContext _context;
         private readonly IUriService _uriService;
-        public CategoryController(ICategoryRepository categoryRepository, DataContext context, IUriService uriService)
+        public CategoryController(ICategoryRepository categoryRepository, DataContext context, IUriService uriService, IAuthRepository authRepository)
         {
             _categoryRepository = categoryRepository;
             _context = context;
             _uriService = uriService;
+            _authRepository = authRepository;
         }
 
+        /// <summary>
+        /// aaa
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         [HttpGet]
+        [Authorize(Roles = "Admin,User")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
         [ProducesResponseType(404)]
         public async Task<IActionResult> GetCategoriesAsync([FromQuery] PaginationFilter filter)
         {
+
+            _authRepository.GetCurrentUser();
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 

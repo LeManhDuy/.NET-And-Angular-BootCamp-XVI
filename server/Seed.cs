@@ -13,7 +13,7 @@ namespace server
         }
         public void SeedDataContext()
         {
-            for (int i = 1; i <= 1500000; i++)
+            for (int i = 1; i <= 2000; i++)
             {
                 var pokemonOwner = new PokemonOwner()
                 {
