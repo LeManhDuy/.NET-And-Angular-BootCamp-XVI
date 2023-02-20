@@ -10,7 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSortModule } from '@angular/material/sort';
-import { PokemonListComponent } from './components/pokemons/pokemon-list/pokemon-list.component';
+import { PokemonListComponent } from './components/pokemon-list/pokemon-list.component';
 import { HttpClientModule } from '@angular/common/http';
 import { MatTableModule } from '@angular/material/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';

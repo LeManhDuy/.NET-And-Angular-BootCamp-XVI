@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using server.Data;
@@ -14,11 +15,13 @@ namespace server.Controller
     [ApiController]
     public class AuthController : ControllerBase
     {
+        private readonly ITokenRepository _tokenRepository;
         private readonly IAuthRepository _authRepository;
         private readonly DataContext _context;
 
-        public AuthController(IAuthRepository authRepository, DataContext context)
+        public AuthController(ITokenRepository tokenRepository, IAuthRepository authRepository, DataContext context)
         {
+            _tokenRepository = tokenRepository;
             _authRepository = authRepository;
             _context = context;
         }
@@ -46,11 +49,6 @@ namespace server.Controller
             }
         }
 
-        ///// <summary>
-        ///// hhhh
-        ///// </summary>
-        ///// <param name="userDto"></param>
-        ///// <returns></returns>
         [HttpPost("login")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
@@ -65,7 +63,8 @@ namespace server.Controller
 
             try
             {
-                var token = await _authRepository.LoginAsync(userDto) != null ? _authRepository.GenerateToken(userDto) : null;
+                var token = await _authRepository.LoginAsync(userDto) != null ? _tokenRepository.GenerateToken(userDto) : null;
+                setTokenCookie(token);
                 return Ok(token);
             }
             catch (Exception e)
@@ -73,5 +72,17 @@ namespace server.Controller
                 return StatusCode(500, e.Message);
             }
         }
+
+        private void setTokenCookie(string token)
+        {
+            // append cookie with refresh token to the http response
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddDays(7)
+            };
+            Response.Cookies.Append("refreshToken", token, cookieOptions);
+        }
+
     }
 }

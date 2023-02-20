@@ -158,3 +158,5 @@ C:\Users\Marine\Desktop\.NET-BootCamp-X-VI\server\bin\Debug\net7.0\Microsoft.Asp
 C:\Users\Marine\Desktop\.NET-BootCamp-X-VI\server\bin\Debug\net7.0\Microsoft.Owin.dll
 C:\Users\Marine\Desktop\.NET-BootCamp-X-VI\server\bin\Debug\net7.0\Microsoft.Owin.Host.SystemWeb.dll
 C:\Users\Marine\Desktop\.NET-BootCamp-X-VI\server\bin\Debug\net7.0\Owin.dll
+C:\Users\Marine\Desktop\.NET-BootCamp-X-VI\server\bin\Debug\net7.0\api.xml
+C:\Users\Marine\Desktop\.NET-BootCamp-X-VI\server\obj\Debug\net7.0\api.xml

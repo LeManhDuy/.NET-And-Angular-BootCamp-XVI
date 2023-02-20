@@ -1,0 +1,21 @@
+<div class="container my-5" center>
+  <table class="table table-borderless" *ngIf="pokemons && pokemons.length > 0">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Pokemon Name</th>
+        <th scope="col">Category Name</th>
+        <th scope="col">Date of Birth</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let pokemon of pokemons; let i = index">
+        <th>{{i + 1}}</th>
+        <td>{{pokemon.Name}}</td>
+        <td>{{pokemon.CategoryName}}</td>
+        <td>{{pokemon.BirthDate | date: 'dd/MM/yyyy'}}</td>
+      </tr>
+    </tbody>
+  </table>
+  <p *ngIf="!pokemons || pokemons.length <= 0 ">no pokemon</p>
+</div>

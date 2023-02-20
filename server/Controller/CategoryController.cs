@@ -1,5 +1,6 @@
 using api.Filter;
 using api.Helper;
+using api.Interfaces;
 using api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,30 +18,40 @@ namespace server.Controller
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryRepository _categoryRepository;
-        private readonly IAuthRepository _authRepository;
+        private readonly ITokenRepository _tokenRepository;
         private readonly DataContext _context;
         private readonly IUriService _uriService;
-        public CategoryController(ICategoryRepository categoryRepository, DataContext context, IUriService uriService, IAuthRepository authRepository)
+        public CategoryController(ICategoryRepository categoryRepository, DataContext context, IUriService uriService, ITokenRepository tokenRepository)
         {
             _categoryRepository = categoryRepository;
             _context = context;
             _uriService = uriService;
-            _authRepository = authRepository;
+            _tokenRepository = tokenRepository;
         }
 
         /// <summary>
-        /// aaa
+        /// Creates an Employee.
         /// </summary>
-        /// <param name="filter"></param>
-        /// <returns></returns>
+        /// <remarks>
+        /// Sample request:
+        /// 
+        ///     POST api/Employee
+        ///     {        
+        ///       "firstName": "Mike",
+        ///       "lastName": "Andrew",
+        ///       "emailId": "Mike.Andrew@gmail.com"        
+        ///     }
+        /// </remarks>
         [HttpGet]
-        [Authorize(Roles = "Admin,User")]
+        [Authorize(Roles = "User")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
         [ProducesResponseType(404)]
         public async Task<IActionResult> GetCategoriesAsync([FromQuery] PaginationFilter filter)
         {
+            if (!_tokenRepository.IsTokenValid())
+                return NotFound();
 
-            _authRepository.GetCurrentUser();
+            _tokenRepository.GetCurrentUser();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
